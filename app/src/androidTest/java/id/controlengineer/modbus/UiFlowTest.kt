@@ -90,7 +90,7 @@ class UiFlowTest {
     fun demoReadTwoRegistersDisplaysCorrectFloat32() {
         launchMode(pro = "off", tab = 1, demo = 1)
         type("input_rw_address", "40001")
-        rule.onNodeWithTag("rw_address_preview").assertTextContains("0x0000")
+        rule.onNodeWithTag("rw_address_preview").assertTextContains("0x0000", substring = true)
         click("btn_read_once")
         rule.waitForIdle()
 
@@ -98,7 +98,7 @@ class UiFlowTest {
         rule.onNodeWithTag("reg_row_1").performScrollTo().assertIsDisplayed()
         rule.onNodeWithTag("pair_0_order_ABCD", useUnmergedTree = true)
             .performScrollTo()
-            .assertTextContains("Float32=123.456")
+            .assertTextContains("Float32=123.456", substring = true)
         rule.onNodeWithTag("pair_0_order_CDAB", useUnmergedTree = true)
             .performScrollTo()
             .assertIsDisplayed()
