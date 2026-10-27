@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Modbus Tool</string>
+    <string name="tab_connection">Connect</string>
+    <string name="tab_rw">Read/Write</string>
+    <string name="tab_monitor">Monitor</string>
+    <string name="tab_pro">Pro</string>
+    <string name="tab_about">About</string>
+    <string name="copied">Copied</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+
+    <!-- Connection Screen -->
+    <string name="conn_mode_title">Connection Mode</string>
+    <string name="conn_mode_tcp">Modbus TCP (Wi-Fi / LAN)</string>
+    <string name="conn_mode_rtu">Modbus RTU (USB-OTG Serial)</string>
+    <string name="conn_demo_active">Demo Simulator Mode Active (Slave 1 &amp; 17)</string>
+    <string name="tcp_host">Host / IP Address</string>
+    <string name="tcp_port">TCP Port (default 502)</string>
+    <string name="unit_slave_id">Slave / Unit ID (1–247)</string>
+    <string name="timeout_ms">Timeout (ms)</string>
+    <string name="usb_devices_title">Detected USB Serial Adapters</string>
+    <string name="usb_refresh">Refresh USB</string>
+    <string name="usb_request_permission">Grant USB Permission</string>
+    <string name="usb_permission_granted">Permission granted</string>
+    <string name="usb_permission_needed">Permission required</string>
+    <string name="usb_no_devices">No USB-OTG RS485/RS232 adapter detected (CH340, CP210x, FTDI, PL2303).</string>
+    <string name="serial_baud">Baud Rate</string>
+    <string name="serial_data_bits">Data Bits</string>
+    <string name="serial_parity">Parity (N/E/O)</string>
+    <string name="serial_stop_bits">Stop Bits</string>
+    <string name="serial_rts_rs485">RS485 Manual RTS/DE Toggle</string>
+    <string name="profiles_title">Saved Connection Profiles</string>
+    <string name="profile_name">Profile Name</string>
+    <string name="profile_save">Save Profile</string>
+    <string name="profile_limit_hint">Free: 1 saved profile · Pro: unlimited profiles</string>
+
+    <!-- Read/Write Screen -->
+    <string name="rw_function_code">Function Code (FC)</string>
+    <string name="rw_address_input">Start Address (0, 0x0000, or Modicon 40001 / 400001)</string>
+    <string name="rw_address_notation">Address Notation</string>
+    <string name="rw_quantity">Quantity (Count)</string>
+    <string name="rw_address_invalid">Invalid address or out of range (0..65535)</string>
+    <string name="rw_address_preview_fmt">FC%1$02d, protocol address %2$d (%3$s · Modicon %4$s)</string>
+    <string name="rw_read_once">Read Once</string>
+    <string name="rw_poll_start">Start Poll</string>
+    <string name="rw_poll_stop">Stop Poll</string>
+    <string name="rw_poll_interval">Poll Interval</string>
+    <string name="rw_scaling_toggle">Linear Analog Scaling</string>
+    <string name="rw_raw_min">Raw Min</string>
+    <string name="rw_raw_max">Raw Max</string>
+    <string name="rw_eng_min">Eng Min</string>
+    <string name="rw_eng_max">Eng Max</string>
+    <string name="rw_eng_unit">Unit</string>
+    <string name="rw_registers_title">Register &amp; Coil Table</string>
+    <string name="rw_pairs_title">32-Bit Pair Inspector (Int32 &amp; Float32 4 Byte Orders — Free)</string>
+    <string name="rw_write_title">Write Coil / Register</string>
+    <string name="rw_write_values">Values to Write (comma separated, or Float32)</string>
+    <string name="rw_write_float_mode">Encode as Float32 (2 registers)</string>
+    <string name="rw_write_button">Write to Device</string>
+    <string name="rw_confirm_write_title">Confirm Modbus Write</string>
+    <string name="rw_confirm_write_body">Send %1$s to Slave/Unit %2$d at protocol address %3$d (%4$s)? Writing to a running PLC or VFD can affect live equipment.</string>
+    <string name="rw_status_idle">Ready. Tap Read Once or Start Poll.</string>
+    <string name="rw_status_ok">Success (%1$d items)</string>
+
+    <!-- Monitor Screen -->
+    <string name="monitor_title">Traffic Monitor (TX / RX Hex)</string>
+    <string name="monitor_copy_all">Copy Log</string>
+    <string name="monitor_clear">Clear</string>
+    <string name="monitor_empty">No Modbus frames recorded yet.</string>
+    <string name="monitor_badge_crc_ok" translatable="false">CRC OK</string>
+    <string name="monitor_badge_crc_err">CRC ERROR</string>
+    <string name="monitor_badge_exception">EXCEPTION</string>
+
+    <!-- Pro Tools Screen -->
+    <string name="subtab_scanner">Scanner</string>
+    <string name="subtab_trend">Trend &amp; CSV</string>
+    <string name="scanner_title">Slave / Unit ID &amp; Serial Auto-Scanner</string>
+    <string name="scanner_start_id">Start ID (1–247)</string>
+    <string name="scanner_end_id">End ID (1–247)</string>
+    <string name="scanner_scan_baud">Also scan RTU Baud/Parity combinations (9600/19200, N/E)</string>
+    <string name="scanner_btn_start">Start Scan</string>
+    <string name="scanner_btn_stop">Stop Scan</string>
+    <string name="scanner_progress">Scanning ID %1$d (%2$d / %3$d)…</string>
+    <string name="scanner_done">Scan complete. Found %1$d device(s).</string>
+    <string name="scanner_no_hits">No active slave responded yet.</string>
+    <string name="trend_title">Live Register Trend (1–4 Registers)</string>
+    <string name="trend_empty">Read or poll holding/input registers to plot live trend points.</string>
+    <string name="csv_export_share">Export &amp; Share CSV (%1$d rows)</string>
+    <string name="csv_clear">Clear Log</string>
+
+    <!-- Locked Pro Screen & Paywall -->
+    <string name="locked_pro_title">Scanner, Trend &amp; CSV Logger (Pro)</string>
+    <string name="locked_pro_subtitle" formatted="false">Reading, writing, and 4-order Float32/Int32 decoding are 100% free with no daily limit. Unlock Pro for field diagnostic extras:</string>
+    <string name="locked_pro_feat_scanner">Slave ID (1–247) &amp; Baud/Parity Auto-Scanner with progress &amp; stop</string>
+    <string name="locked_pro_feat_profiles">Unlimited saved connection profiles &amp; device presets</string>
+    <string name="locked_pro_feat_csv">CSV Data Logger with instant Android Share sheet (no storage permission)</string>
+    <string name="locked_pro_feat_trend">Multi-register live trend chart (1–4 registers)</string>
+
+    <string name="pro_unlock">Unlock Pro</string>
+    <string name="pro_lifetime">Pro (lifetime)</string>
+    <string name="pro_active_until">Pro active until %1$s</string>
+    <string name="pro_trial_days">Trial Pro: %1$d days left</string>
+    <string name="pro_trial_hours">Trial Pro: %1$d hours left</string>
+    <string name="trial_welcome_title">3-Day Pro Trial Active</string>
+    <string name="trial_welcome_message">All Pro features are free for 3 days. No payment, no subscription; afterward Modbus Read/Write and Float32 decoder stay free without limits.</string>
+    <string name="paywall_trial_ended">Trial ended</string>
+    <string name="privacy_options">Privacy options</string>
+
+    <string name="paywall_title">Modbus Tool Pro</string>
+    <string name="paywall_subtitle">Unlimited Modbus TCP/RTU Read &amp; Write and 4-order Float32 inspector stay free forever. Unlock advanced field tools:</string>
+    <string name="paywall_reward_disclosure">Watch 1 video ad to completion to unlock all Pro features for 24 hours (stays active offline).</string>
+    <string name="paywall_watch_ad">Watch 1 ad: Pro for 24h</string>
+    <string name="paywall_buy_price">Buy Pro (%1$s)</string>
+    <string name="paywall_buy_unavailable">Buy Pro</string>
+    <string name="billing_unavailable_reason">In-app product pro_lifetime is not available from Google Play on this device yet.</string>
+    <string name="ad_unavailable">Rewarded ad failed to load or device is offline. Core features remain available.</string>
+    <string name="purchase_pending">Purchase is pending confirmation in Google Play.</string>
+
+    <!-- About & Field Guide Screen -->
+    <string name="about_title">About &amp; Field Guide</string>
+    <string name="about_disclaimer">Independent application, not affiliated with the Modbus Organization.</string>
+    <string name="about_version">Version %1$s · Pure Kotlin Modbus TCP/RTU Master</string>
+    <string name="guide_rs485_title">1. RS485 Wiring (A/B, 120 Ω Termination &amp; Ground)</string>
+    <string name="guide_rs485_body">• Polarity A/B (D+/D−): Formally in TIA/EIA-485, line B is non-inverting (+) and A is inverting (−), but many PLC, VFD, and meter manufacturers label A as D+ and B as D−. If you get timeouts, swap wires A and B first (this will not damage RS485 transceivers).\n• 120 Ω Termination: Place a 120 Ω resistor across A and B at the two physical ends of a long bus (or at high baud rates) to prevent signal reflections. For a short 1 m bench cable, termination is usually not required.\n• Common Reference: Connect signal ground (GND/COM) or shield at one point to keep common-mode voltage within −7 V to +12 V.</string>
+    <string name="guide_address_title">2. 0-Based Protocol Address vs Modicon 40001</string>
+    <string name="guide_address_body">• Inside a Modbus frame on the wire, addresses always start at 0 (0x0000).\n• Traditional Modicon documentation uses 1-based human numbering where the leading digit indicates the table: 0xxxx = Coils (FC01/05/15), 1xxxx = Discrete Inputs (FC02), 3xxxx = Input Registers (FC04), and 4xxxx = Holding Registers (FC03/06/16).\n• Therefore, Holding Register 40001 (5-digit) or 400001 (6-digit) is transmitted on the wire as Function Code 03 with protocol address 0 (0x0000), and 40108 becomes protocol address 107 (0x006B).</string>
+    <string name="guide_endian_title">3. Float32 Word &amp; Byte Order (ABCD / CDAB / BADC / DCBA)</string>
+    <string name="guide_endian_body">• Modbus registers are 16-bit big-endian words, so a 32-bit IEEE-754 float spans 2 consecutive registers.\n• ABCD (Big-Endian) sends the high word first and high byte first; CDAB (Word-Swapped) sends the low 16-bit word first and is very common in power meters and PLCs. This app displays all 4 orders simultaneously so you immediately spot the realistic engineering number.</string>
+</resources>

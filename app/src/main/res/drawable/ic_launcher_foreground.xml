@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Ikon vektor orisinal: gelombang diferensial A/B RS485 dan blok register heksadesimal (bukan logo Modbus Organization) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#4FC3F7"
+        android:strokeWidth="4.0"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M28,42 L38,42 L38,32 L50,32 L50,42 L62,42 L62,32 L74,32 L74,42 L80,42" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFB300"
+        android:strokeWidth="4.0"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M28,50 L38,50 L38,60 L50,60 L50,50 L62,50 L62,60 L74,60 L74,50 L80,50" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M30,68 L78,68 L78,78 L30,78 Z M46,68 L46,78 M62,68 L62,78" />
+</vector>

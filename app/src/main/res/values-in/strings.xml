@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tab_connection">Koneksi</string>
+    <string name="tab_rw">Baca/Tulis</string>
+    <string name="tab_monitor">Monitor</string>
+    <string name="tab_pro">Pro</string>
+    <string name="tab_about">Tentang</string>
+    <string name="copied">Disalin</string>
+    <string name="close">Tutup</string>
+    <string name="cancel">Batal</string>
+    <string name="confirm">Konfirmasi</string>
+
+    <!-- Layar Koneksi -->
+    <string name="conn_mode_title">Mode Koneksi</string>
+    <string name="conn_mode_tcp">Modbus TCP (Wi-Fi / LAN)</string>
+    <string name="conn_mode_rtu">Modbus RTU (Serial USB-OTG)</string>
+    <string name="conn_demo_active">Mode Simulator Demo Aktif (Slave 1 &amp; 17)</string>
+    <string name="tcp_host">Host / Alamat IP</string>
+    <string name="tcp_port">Port TCP (bawaan 502)</string>
+    <string name="unit_slave_id">Slave / Unit ID (1–247)</string>
+    <string name="timeout_ms">Timeout (ms)</string>
+    <string name="usb_devices_title">Adaptor Serial USB Terdeteksi</string>
+    <string name="usb_refresh">Segarkan USB</string>
+    <string name="usb_request_permission">Minta Izin USB</string>
+    <string name="usb_permission_granted">Izin diberikan</string>
+    <string name="usb_permission_needed">Perlu izin USB</string>
+    <string name="usb_no_devices">Belum ada adaptor USB-OTG RS485/RS232 terdeteksi (CH340, CP210x, FTDI, PL2303).</string>
+    <string name="serial_baud">Baud Rate</string>
+    <string name="serial_data_bits">Data Bits</string>
+    <string name="serial_parity">Parity (N/E/O)</string>
+    <string name="serial_stop_bits">Stop Bits</string>
+    <string name="serial_rts_rs485">Toggle RTS/DE Manual RS485</string>
+    <string name="profiles_title">Profil Koneksi Tersimpan</string>
+    <string name="profile_name">Nama Profil</string>
+    <string name="profile_save">Simpan Profil</string>
+    <string name="profile_limit_hint">Gratis: 1 profil tersimpan · Pro: profil tak terbatas</string>
+
+    <!-- Layar Baca/Tulis -->
+    <string name="rw_function_code">Kode Fungsi (FC)</string>
+    <string name="rw_address_input">Alamat Awal (0, 0x0000, atau Modicon 40001 / 400001)</string>
+    <string name="rw_address_notation">Notasi Alamat</string>
+    <string name="rw_quantity">Jumlah (Quantity)</string>
+    <string name="rw_address_invalid">Alamat tidak valid atau di luar rentang (0..65535)</string>
+    <string name="rw_address_preview_fmt">FC%1$02d, alamat protokol %2$d (%3$s · Modicon %4$s)</string>
+    <string name="rw_read_once">Baca Sekali</string>
+    <string name="rw_poll_start">Mulai Poll</string>
+    <string name="rw_poll_stop">Hentikan Poll</string>
+    <string name="rw_poll_interval">Interval Poll</string>
+    <string name="rw_scaling_toggle">Skala Linear Analog</string>
+    <string name="rw_raw_min">Raw Min</string>
+    <string name="rw_raw_max">Raw Max</string>
+    <string name="rw_eng_min">Teknik Min</string>
+    <string name="rw_eng_max">Teknik Max</string>
+    <string name="rw_eng_unit">Satuan</string>
+    <string name="rw_registers_title">Tabel Register &amp; Coil</string>
+    <string name="rw_pairs_title">Inspektor Pasangan 32-Bit (Int32 &amp; Float32 4 Urutan — Gratis)</string>
+    <string name="rw_write_title">Tulis Coil / Register</string>
+    <string name="rw_write_values">Nilai Tulis (pisahkan koma, atau Float32)</string>
+    <string name="rw_write_float_mode">Enkode sebagai Float32 (2 register)</string>
+    <string name="rw_write_button">Tulis ke Perangkat</string>
+    <string name="rw_confirm_write_title">Konfirmasi Tulis Modbus</string>
+    <string name="rw_confirm_write_body">Kirim %1$s ke Slave/Unit %2$d pada alamat protokol %3$d (%4$s)? Menulis ke PLC atau VFD yang sedang berjalan dapat memengaruhi mesin.</string>
+    <string name="rw_status_idle">Siap. Ketuk Baca Sekali atau Mulai Poll.</string>
+    <string name="rw_status_ok">Berhasil (%1$d data)</string>
+
+    <!-- Layar Monitor -->
+    <string name="monitor_title">Monitor Lalu Lintas (Hex TX / RX)</string>
+    <string name="monitor_copy_all">Salin Log</string>
+    <string name="monitor_clear">Hapus</string>
+    <string name="monitor_empty">Belum ada frame Modbus yang terekam.</string>
+    <string name="monitor_badge_crc_err">CRC SALAH</string>
+    <string name="monitor_badge_exception">EXCEPTION</string>
+
+    <!-- Layar Alat Pro -->
+    <string name="subtab_scanner">Pemindai</string>
+    <string name="subtab_trend">Tren &amp; CSV</string>
+    <string name="scanner_title">Pemindai Otomatis Slave / Unit ID &amp; Serial</string>
+    <string name="scanner_start_id">ID Awal (1–247)</string>
+    <string name="scanner_end_id">ID Akhir (1–247)</string>
+    <string name="scanner_scan_baud">Pindai juga kombinasi Baud/Parity RTU (9600/19200, N/E)</string>
+    <string name="scanner_btn_start">Mulai Pindai</string>
+    <string name="scanner_btn_stop">Hentikan</string>
+    <string name="scanner_progress">Memindai ID %1$d (%2$d / %3$d)…</string>
+    <string name="scanner_done">Pemindaian selesai. Ditemukan %1$d perangkat.</string>
+    <string name="scanner_no_hits">Belum ada slave aktif yang merespons.</string>
+    <string name="trend_title">Grafik Tren Register (1–4 Register)</string>
+    <string name="trend_empty">Baca atau poll holding/input register untuk menampilkan grafik tren waktu nyata.</string>
+    <string name="csv_export_share">Ekspor &amp; Bagikan CSV (%1$d baris)</string>
+    <string name="csv_clear">Hapus Log</string>
+
+    <!-- Layar Pro Terkunci & Paywall -->
+    <string name="locked_pro_title">Pemindai, Grafik Tren &amp; Log CSV (Pro)</string>
+    <string name="locked_pro_subtitle" formatted="false">Baca/tulis Modbus serta dekoder Float32/Int32 4 urutan 100% gratis tanpa batas harian. Buka Pro untuk fitur diagnostik lanjutan:</string>
+    <string name="locked_pro_feat_scanner">Pemindai otomatis Slave ID (1–247) &amp; Baud/Parity dengan progres &amp; tombol stop</string>
+    <string name="locked_pro_feat_profiles">Simpan profil koneksi &amp; peta register tak terbatas</string>
+    <string name="locked_pro_feat_csv">Pencatat data ke CSV dengan Share sheet Android (tanpa izin penyimpanan)</string>
+    <string name="locked_pro_feat_trend">Grafik tren sederhana 1–4 register secara langsung</string>
+
+    <string name="pro_unlock">Buka Pro</string>
+    <string name="pro_lifetime">Pro (seumur hidup)</string>
+    <string name="pro_active_until">Pro aktif s/d %1$s</string>
+    <string name="pro_trial_days">Trial Pro: sisa %1$d hari</string>
+    <string name="pro_trial_hours">Trial Pro: sisa %1$d jam</string>
+    <string name="trial_welcome_title">Trial Pro 3 Hari Aktif</string>
+    <string name="trial_welcome_message">Semua fitur Pro gratis selama 3 hari. Tanpa pembayaran, tanpa langganan; setelahnya fitur Baca/Tulis Modbus dan dekoder Float32 tetap gratis tanpa batas.</string>
+    <string name="paywall_trial_ended">Trial berakhir</string>
+    <string name="privacy_options">Pilihan privasi</string>
+
+    <string name="paywall_title">Modbus Tool Pro</string>
+    <string name="paywall_subtitle">Baca/tulis Modbus TCP/RTU tanpa batas dan inspektor Float32 4 urutan tetap gratis selamanya. Buka alat bantu lapangan lanjutan:</string>
+    <string name="paywall_reward_disclosure">Tonton 1 iklan video hingga selesai untuk membuka seluruh fitur Pro selama 24 jam (tetap berlaku saat offline).</string>
+    <string name="paywall_watch_ad">Tonton 1 iklan: Pro 24 jam</string>
+    <string name="paywall_buy_price">Beli Pro (%1$s)</string>
+    <string name="paywall_buy_unavailable">Beli Pro</string>
+    <string name="billing_unavailable_reason">Produk in-app pro_lifetime belum tersedia di Google Play pada perangkat ini.</string>
+    <string name="ad_unavailable">Iklan gagal dimuat atau perangkat sedang offline. Fitur inti tetap dapat digunakan.</string>
+    <string name="purchase_pending">Pembelian sedang menunggu konfirmasi pembayaran Google Play.</string>
+
+    <!-- Layar Tentang & Panduan Lapangan -->
+    <string name="about_title">Tentang &amp; Panduan Lapangan</string>
+    <string name="about_disclaimer">Aplikasi independen, tidak berafiliasi dengan Modbus Organization.</string>
+    <string name="about_version">Versi %1$s · Master Modbus TCP/RTU Kotlin Murni</string>
+    <string name="guide_rs485_title">1. Pengabelan RS485 (Kabel A/B, Terminasi 120 Ω &amp; Ground)</string>
+    <string name="guide_rs485_body">• Polaritas A/B (D+/D−): Secara standar TIA/EIA-485 jalur B adalah non-inverting (+) dan A adalah inverting (−), tetapi banyak pabrikan PLC, VFD, dan power meter memberi label A sebagai D+ dan B sebagai D−. Bila komunikasi timeout, langkah pertama paling cepat adalah menukar kabel A dan B (aman dan tidak merusak IC transceiver RS485).\n• Resistor Terminasi 120 Ω: Pasang resistor 120 Ω di antara A dan B pada kedua ujung terjauh jalur bus RS485 (terutama kabel panjang atau baud rate tinggi) untuk meredam pantulan sinyal. Untuk tes meja dengan kabel pendek 1 m, terminasi umumnya tidak wajib.\n• Referensi Ground: Hubungkan referensi ground/COM sinyal agar beda potensial common-mode tetap dalam batas aman (−7 V s/d +12 V).</string>
+    <string name="guide_address_title">2. Alamat 0-Based vs Notasi Modicon 40001</string>
+    <string name="guide_address_body">• Di dalam paket protokol Modbus (PDU), penomoran alamat selalu dimulai dari 0 (0x0000).\n• Banyak manual perangkat memakai penomoran Modicon berbasis 1 dengan angka depan sebagai penanda tabel: 0xxxx = Coil (FC01/05/15), 1xxxx = Discrete Input (FC02), 3xxxx = Input Register (FC04), dan 4xxxx = Holding Register (FC03/06/16).\n• Contoh: Holding Register 40001 (5 digit) atau 400001 (6 digit) dikirim di kabel sebagai FC03 dengan alamat protokol 0 (0x0000), sedangkan 40108 menjadi alamat protokol 107 (0x006B).</string>
+    <string name="guide_endian_title">3. Urutan Byte/Word Float32 (ABCD / CDAB / BADC / DCBA)</string>
+    <string name="guide_endian_body">• Satu register Modbus hanya selebar 16 bit, sehingga angka desimal IEEE-754 Float32 menempati 2 register berurutan (32 bit).\n• Sebagian perangkat mengirim word tinggi lebih dulu (ABCD / Big-Endian), sedangkan banyak power meter dan PLC mengirim word rendah lebih dulu (CDAB / Word-Swapped). Aplikasi ini menampilkan keempat urutan sekaligus secara gratis agar Anda langsung melihat nilai teknik yang masuk akal.</string>
+</resources>
