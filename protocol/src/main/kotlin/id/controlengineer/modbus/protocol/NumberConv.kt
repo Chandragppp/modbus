@@ -1,5 +1,6 @@
 package id.controlengineer.modbus.protocol
 
+import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.Locale
 import kotlin.math.abs
@@ -250,8 +251,8 @@ data class OrderedValue32(
             val m = if (mant.contains('.')) mant.trimEnd('0').trimEnd('.') else mant
             "${m}E${exp.toInt()}"
         } else {
-            var s = String.format(Locale.ROOT, "%.6f", float32)
-            if (s.contains('.')) s = s.trimEnd('0').trimEnd('.')
+            // Representasi desimal terpendek dari Float (123.456f tampil 123.456, bukan 123.456001)
+            val s = BigDecimal(float32.toString()).stripTrailingZeros().toPlainString()
             if (s == "-0") "0" else s
         }
 }
