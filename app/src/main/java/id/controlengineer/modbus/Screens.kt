@@ -324,11 +324,8 @@ fun ConnectionScreen(
         // Profil Koneksi Tersimpan (Gratis: maks 1, Pro: tak terbatas)
         Card(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+                // Judul dan petunjuk batas profil ditumpuk agar tidak berdesakan di layar sempit
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
                         stringResource(R.string.profiles_title),
                         style = MaterialTheme.typography.titleMedium,
@@ -903,8 +900,9 @@ fun MonitorScreen(session: ModbusSessionController) {
                 stringResource(R.string.monitor_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.weight(1f),
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 OutlinedButton(
                     onClick = {
                         val allText = frames.joinToString("\n") { f ->
@@ -919,13 +917,13 @@ fun MonitorScreen(session: ModbusSessionController) {
                     enabled = frames.isNotEmpty(),
                     modifier = Modifier.testTag("btn_copy_log"),
                 ) {
-                    Text(stringResource(R.string.monitor_copy_all))
+                    Text(stringResource(R.string.monitor_copy_all), maxLines = 1, softWrap = false)
                 }
                 TextButton(
                     onClick = { session.clearFrameLog() },
                     modifier = Modifier.testTag("btn_clear_log"),
                 ) {
-                    Text(stringResource(R.string.monitor_clear))
+                    Text(stringResource(R.string.monitor_clear), maxLines = 1, softWrap = false)
                 }
             }
         }

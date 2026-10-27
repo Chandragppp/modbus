@@ -2,6 +2,7 @@ package id.controlengineer.modbus.protocol
 
 import java.math.BigInteger
 import java.util.Locale
+import kotlin.math.abs
 
 enum class Base(val radix: Int) { BIN(2), OCT(8), DEC(10), HEX(16) }
 
@@ -243,6 +244,11 @@ data class OrderedValue32(
     val floatText: String
         get() = if (float32.isNaN() || float32.isInfinite()) {
             float32.toString()
+        } else if (float32 != 0f && (abs(float32) >= 1e7f || abs(float32) < 1e-4f)) {
+            // Nilai sangat besar/kecil (sering akibat urutan byte salah) pakai notasi ilmiah agar ringkas
+            val (mant, exp) = String.format(Locale.ROOT, "%.6E", float32).split('E')
+            val m = if (mant.contains('.')) mant.trimEnd('0').trimEnd('.') else mant
+            "${m}E${exp.toInt()}"
         } else {
             var s = String.format(Locale.ROOT, "%.6f", float32)
             if (s.contains('.')) s = s.trimEnd('0').trimEnd('.')
