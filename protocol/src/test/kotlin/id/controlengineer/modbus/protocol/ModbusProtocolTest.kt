@@ -251,6 +251,11 @@ class ModbusProtocolTest {
         assertEquals(listOf(0xE979, 0x42F6), RegisterDecoder.encodeFloat32(123.456f, ByteOrder.CDAB))
         assertEquals(listOf(0xF642, 0x79E9), RegisterDecoder.encodeFloat32(123.456f, ByteOrder.BADC))
         assertEquals(listOf(0x79E9, 0xF642), RegisterDecoder.encodeFloat32(123.456f, ByteOrder.DCBA))
+        // Teks: nilai normal desimal; urutan salah (CDAB = 0xE97942F6 = -1.883367E25) pakai notasi ilmiah
+        val abcdPair = DecodedRegisterPair(0, 0x42F6, 0xE979)
+        assertEquals("123.456", abcdPair.forOrder(ByteOrder.ABCD).floatText)
+        assertEquals("-1.883367E25", abcdPair.forOrder(ByteOrder.CDAB).floatText)
+        assertEquals("0", DecodedRegisterPair(0, 0, 0).forOrder(ByteOrder.ABCD).floatText)
 
         // -1.0f = 0xBF800000 (A=BF, B=80, C=00, D=00)
         for (order in ByteOrder.entries) {
