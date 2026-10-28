@@ -97,6 +97,7 @@
     <string name="locked_pro_feat_profiles">Unlimited saved connection profiles &amp; device presets</string>
     <string name="locked_pro_feat_csv">CSV Data Logger with instant Android Share sheet (no storage permission)</string>
     <string name="locked_pro_feat_trend">Multi-register live trend chart (1–4 registers)</string>
+    <string name="locked_pro_feat_reports">PDF &amp; Excel (.xlsx) field reports for registers, scanner &amp; trend log</string>
 
     <string name="pro_unlock">Unlock Pro</string>
     <string name="pro_lifetime">Pro (lifetime)</string>
@@ -117,6 +118,67 @@
     <string name="billing_unavailable_reason">In-app product pro_lifetime is not available from Google Play on this device yet.</string>
     <string name="ad_unavailable">Rewarded ad failed to load or device is offline. Core features remain available.</string>
     <string name="purchase_pending">Purchase is pending confirmation in Google Play.</string>
+
+    <!-- Reports (PDF & Excel) -->
+    <string name="report_btn_pdf">PDF Report</string>
+    <string name="report_btn_xlsx">Excel</string>
+    <string name="report_dialog_title">Report Header</string>
+    <string name="report_field_device">Device / Slave Name (e.g. Power meter PM-01, VFD Pump 2)</string>
+    <string name="report_field_technician">Technician / Prepared by</string>
+    <string name="report_field_company">Company / Project</string>
+    <string name="report_field_location">Location / Panel</string>
+    <string name="report_field_notes">Notes</string>
+    <string name="report_export_action">Create &amp; Share</string>
+    <string name="report_reg_title">Modbus Register Read Report</string>
+    <string name="report_scan_title">Modbus Slave Scanner Report</string>
+    <string name="report_trend_title">Modbus Trend &amp; Data Log Report</string>
+    <string name="report_section_header">Inspection &amp; Device Information</string>
+    <string name="report_section_connection">Connection &amp; Request Parameters</string>
+    <string name="report_section_registers">Register / Coil Values</string>
+    <string name="report_section_pairs">32-Bit Register Pairs (Int32 &amp; Float32)</string>
+    <string name="report_section_scan_hits">Responding Slave Devices</string>
+    <string name="report_section_trend_stats">Column Summary Statistics</string>
+    <string name="report_section_trend_samples">Recorded Data Samples</string>
+    <string name="report_label_device">Device / Slave</string>
+    <string name="report_label_technician">Technician</string>
+    <string name="report_label_company">Company / Project</string>
+    <string name="report_label_location">Location</string>
+    <string name="report_label_notes">Notes</string>
+    <string name="report_label_conn_mode">Connection</string>
+    <string name="report_label_unit_id">Unit / Slave ID</string>
+    <string name="report_label_timeout">Timeout</string>
+    <string name="report_label_fc">Function Code</string>
+    <string name="report_label_start_addr">Start Address</string>
+    <string name="report_label_quantity">Quantity</string>
+    <string name="report_label_read_time">Read Time</string>
+    <string name="report_label_scale">Linear Scaling</string>
+    <string name="report_label_byte_order">32-Bit Byte Order</string>
+    <string name="report_label_id_range">Scanned ID Range</string>
+    <string name="report_label_baud_tried">Baud / Serial Tried</string>
+    <string name="report_label_scanned_count">Total IDs Scanned</string>
+    <string name="report_label_found_count">Responding Slaves</string>
+    <string name="report_label_interval">Poll Interval</string>
+    <string name="report_label_sample_count">Sample Count</string>
+    <string name="report_trend_truncated">Showing last %1$d of %2$d samples (truncated to max 200 rows).</string>
+    <string name="report_trend_not_truncated">Showing all %1$d recorded samples (max 200 rows).</string>
+    <string name="report_col_addr">Addr (0-Based)</string>
+    <string name="report_col_modicon">Modicon</string>
+    <string name="report_col_raw_hex">Raw (Hex)</string>
+    <string name="report_col_raw_dec">Raw (UInt16 / Int16)</string>
+    <string name="report_col_decoded">Decoded Value</string>
+    <string name="report_col_status">State (ON/OFF)</string>
+    <string name="report_col_slave_id">Slave ID</string>
+    <string name="report_col_baud">Baud / Serial</string>
+    <string name="report_col_resp_time">Response Time</string>
+    <string name="report_col_detail">Response Detail</string>
+    <string name="report_col_column">Column</string>
+    <string name="report_col_min">Min</string>
+    <string name="report_col_max">Max</string>
+    <string name="report_col_avg">Average</string>
+    <string name="report_col_timestamp">Timestamp (ISO)</string>
+    <string name="report_footer_brand">Generated with %1$s — ControlEngineerID</string>
+    <string name="report_sign_prepared">Prepared by</string>
+    <string name="report_sign_verified">Verified by</string>
 
     <!-- About & Field Guide Screen -->
     <string name="about_title">About &amp; Field Guide</string>

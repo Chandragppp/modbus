@@ -32,6 +32,7 @@ import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
 import id.controlengineer.modbus.protocol.ConnectionProfile
 import id.controlengineer.modbus.protocol.ProEntitlement
+import id.controlengineer.modbus.protocol.ReportMeta
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -53,6 +54,7 @@ interface ProRepository {
     val statusMessage: StateFlow<String?>
     val privacyOptionsRequired: StateFlow<Boolean>
     val savedProfiles: StateFlow<List<ConnectionProfile>>
+    val reportMeta: StateFlow<ReportMeta>
 
     fun purchase(activity: Activity)
     fun showRewarded(activity: Activity)
@@ -63,6 +65,7 @@ interface ProRepository {
     fun showPrivacyOptions(activity: Activity) {}
     fun clearStatusMessage() {}
     fun saveProfiles(profiles: List<ConnectionProfile>)
+    fun saveReportMeta(meta: ReportMeta) {}
 }
 
 /** Implementasi palsu untuk androidTest dan mode debug extra "pro" / "trial". */
@@ -98,6 +101,9 @@ class FakeProRepository(
     private val _savedProfiles = MutableStateFlow<List<ConnectionProfile>>(emptyList())
     override val savedProfiles: StateFlow<List<ConnectionProfile>> = _savedProfiles.asStateFlow()
 
+    private val _reportMeta = MutableStateFlow(ReportMeta())
+    override val reportMeta: StateFlow<ReportMeta> = _reportMeta.asStateFlow()
+
     override fun purchase(activity: Activity) {
         if (_formattedPrice.value != null) {
             _lifetime.value = true
@@ -125,6 +131,10 @@ class FakeProRepository(
 
     override fun saveProfiles(profiles: List<ConnectionProfile>) {
         _savedProfiles.value = profiles
+    }
+
+    override fun saveReportMeta(meta: ReportMeta) {
+        _reportMeta.value = meta
     }
 }
 
@@ -156,6 +166,9 @@ class PlayProRepository(context: Context) : ProRepository {
 
     private val _savedProfiles = MutableStateFlow<List<ConnectionProfile>>(emptyList())
     override val savedProfiles: StateFlow<List<ConnectionProfile>> = _savedProfiles.asStateFlow()
+
+    private val _reportMeta = MutableStateFlow(ReportMeta())
+    override val reportMeta: StateFlow<ReportMeta> = _reportMeta.asStateFlow()
 
     private var productDetails: ProductDetails? = null
     private var rewardedAd: RewardedAd? = null
@@ -208,6 +221,7 @@ class PlayProRepository(context: Context) : ProRepository {
                     appContext.proDataStore.edit { it[KEY_REWARDED_UNTIL] = clamped }
                 }
                 _savedProfiles.value = ConnectionProfile.decodeList(prefs[KEY_PROFILES] ?: "")
+                _reportMeta.value = ReportMeta.decode(prefs[KEY_REPORT_META] ?: "")
             }
         }
         refresh()
@@ -453,6 +467,13 @@ class PlayProRepository(context: Context) : ProRepository {
         }
     }
 
+    override fun saveReportMeta(meta: ReportMeta) {
+        _reportMeta.value = meta
+        scope.launch {
+            appContext.proDataStore.edit { it[KEY_REPORT_META] = meta.encode() }
+        }
+    }
+
     companion object {
         const val PRODUCT_ID = "pro_lifetime"
         private val KEY_LIFETIME = booleanPreferencesKey("pro_lifetime")
@@ -460,5 +481,6 @@ class PlayProRepository(context: Context) : ProRepository {
         private val KEY_TRIAL_START = longPreferencesKey("trial_start_millis")
         private val KEY_WELCOME_SHOWN = booleanPreferencesKey("trial_welcome_shown")
         private val KEY_PROFILES = stringPreferencesKey("saved_profiles")
+        private val KEY_REPORT_META = stringPreferencesKey("report_meta")
     }
 }

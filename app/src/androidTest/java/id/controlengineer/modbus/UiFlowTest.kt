@@ -2,6 +2,10 @@ package id.controlengineer.modbus
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.pdf.PdfRenderer
+import android.os.ParcelFileDescriptor
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
@@ -17,11 +21,16 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import id.controlengineer.modbus.protocol.ByteOrder
+import id.controlengineer.modbus.protocol.ReportMeta
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import java.util.zip.ZipInputStream
 
 /**
  * Alur UI utama di emulator. Tiap tes menyimpan screenshot ke filesDir/shots (diambil skrip CI lewat run-as).
@@ -174,5 +183,101 @@ class UiFlowTest {
         rule.waitForIdle()
         rule.onNodeWithTag("about_disclaimer_text").assertTextEquals(str(R.string.about_disclaimer))
         shot("about-disclaimer")
+    }
+
+    // 6. Mode demo=1 & pro=on: baca 10 holding register -> buat laporan PDF & XLSX langsung, render halaman 1 ke shot("report-pdf-page1").
+    @Test
+    fun reportPdfAndXlsxGeneratedFromTenHoldingRegisters() {
+        launchMode(pro = "on", tab = 1, demo = 1)
+        type("input_rw_address", "40001")
+        type("input_rw_quantity", "10")
+        click("btn_read_once")
+
+        val session = rule.activity.sessionController
+        rule.waitUntil(5_000) {
+            session.lastRegisters.value.size == 10
+        }
+        assertEquals(10, session.lastRegisters.value.size)
+
+        val meta = ReportMeta(
+            technician = "Andi Pratama",
+            company = "PT Kontrol Industri",
+            location = "Panel Utama MDP-01",
+            notes = "Pemeriksaan rutin parameter daya & VFD",
+            deviceName = "Power meter PM-01",
+        )
+        val pdfFile = ModbusReportExporter.exportRegisterPdf(
+            context = rule.activity,
+            meta = meta,
+            profile = session.profile.value,
+            unitId = session.lastUnitId.value,
+            fc = session.lastFunctionCode.value,
+            startAddress = session.lastStartAddress.value,
+            registers = session.lastRegisters.value,
+            bits = session.lastBits.value,
+            scale = null,
+            byteOrder = ByteOrder.ABCD,
+            readTimestampMillis = session.lastReadTimestampMillis.value,
+        )
+        assertTrue(pdfFile.exists() && pdfFile.length() > 0L)
+
+        ParcelFileDescriptor.open(pdfFile, ParcelFileDescriptor.MODE_READ_ONLY).use { pfd ->
+            PdfRenderer(pfd).use { renderer ->
+                assertTrue(renderer.pageCount >= 1)
+                renderer.openPage(0).use { page ->
+                    val bmp = Bitmap.createBitmap(page.width * 2, page.height * 2, Bitmap.Config.ARGB_8888)
+                    Canvas(bmp).drawColor(Color.WHITE)
+                    page.render(bmp, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                    val dir = File(rule.activity.filesDir, "shots").apply { mkdirs() }
+                    File(dir, "report-pdf-page1.png").outputStream().use {
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, it)
+                    }
+                }
+            }
+        }
+
+        val xlsxFile = ModbusReportExporter.exportRegisterXlsx(
+            context = rule.activity,
+            meta = meta,
+            profile = session.profile.value,
+            unitId = session.lastUnitId.value,
+            fc = session.lastFunctionCode.value,
+            startAddress = session.lastStartAddress.value,
+            registers = session.lastRegisters.value,
+            bits = session.lastBits.value,
+            scale = null,
+            byteOrder = ByteOrder.ABCD,
+            readTimestampMillis = session.lastReadTimestampMillis.value,
+        )
+        assertTrue(xlsxFile.exists() && xlsxFile.length() > 0L)
+        val zipEntries = mutableSetOf<String>()
+        ZipInputStream(xlsxFile.inputStream()).use { zis ->
+            while (true) {
+                val entry = zis.nextEntry ?: break
+                zipEntries.add(entry.name)
+                zis.closeEntry()
+            }
+        }
+        assertTrue(zipEntries.contains("xl/workbook.xml"))
+        assertTrue(zipEntries.contains("xl/worksheets/sheet1.xml"))
+    }
+
+    // 7. Saat pro=off, tombol laporan (PDF maupun Excel) membuka paywall.
+    @Test
+    fun reportButtonsOpenPaywallWhenProOff() {
+        launchMode(pro = "off", tab = 1, demo = 1)
+        click("btn_report_pdf")
+        rule.waitUntil(5_000) {
+            rule.onAllNodesWithTag("paywall_sheet").fetchSemanticsNodes().isNotEmpty()
+        }
+        rule.onNodeWithTag("paywall_sheet").assertIsDisplayed()
+        click("paywall_close")
+        rule.waitForIdle()
+
+        click("btn_report_xlsx")
+        rule.waitUntil(5_000) {
+            rule.onAllNodesWithTag("paywall_sheet").fetchSemanticsNodes().isNotEmpty()
+        }
+        rule.onNodeWithTag("paywall_sheet").assertIsDisplayed()
     }
 }

@@ -213,6 +213,7 @@ fun App(
     val statusMessage by proRepo.statusMessage.collectAsState()
     val privacyRequired by proRepo.privacyOptionsRequired.collectAsState()
     val savedProfiles by proRepo.savedProfiles.collectAsState()
+    val reportMeta by proRepo.reportMeta.collectAsState()
 
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -371,13 +372,29 @@ fun App(
                             showPaywall = true
                         },
                     )
-                    1 -> ReadWriteScreen(session = session)
+                    1 -> ReadWriteScreen(
+                        session = session,
+                        isPro = isPro,
+                        reportMeta = reportMeta,
+                        onSaveReportMeta = { proRepo.saveReportMeta(it) },
+                        onRequestPro = {
+                            proRepo.clearStatusMessage()
+                            showPaywall = true
+                        },
+                    )
                     2 -> MonitorScreen(session = session)
                     3 -> {
                         if (isPro) {
                             ProToolsScreen(
                                 initialSubTab = startSubTab,
                                 session = session,
+                                isPro = isPro,
+                                reportMeta = reportMeta,
+                                onSaveReportMeta = { proRepo.saveReportMeta(it) },
+                                onRequestPro = {
+                                    proRepo.clearStatusMessage()
+                                    showPaywall = true
+                                },
                             )
                         } else {
                             LockedProTabScreen(
@@ -388,6 +405,7 @@ fun App(
                                     stringResource(R.string.locked_pro_feat_profiles),
                                     stringResource(R.string.locked_pro_feat_csv),
                                     stringResource(R.string.locked_pro_feat_trend),
+                                    stringResource(R.string.locked_pro_feat_reports),
                                 ),
                                 onUnlockPro = {
                                     proRepo.clearStatusMessage()
@@ -548,6 +566,7 @@ fun PaywallBottomSheet(
                 Text("• " + stringResource(R.string.locked_pro_feat_profiles), style = MaterialTheme.typography.bodyMedium)
                 Text("• " + stringResource(R.string.locked_pro_feat_csv), style = MaterialTheme.typography.bodyMedium)
                 Text("• " + stringResource(R.string.locked_pro_feat_trend), style = MaterialTheme.typography.bodyMedium)
+                Text("• " + stringResource(R.string.locked_pro_feat_reports), style = MaterialTheme.typography.bodyMedium)
             }
 
             Spacer(Modifier.height(4.dp))

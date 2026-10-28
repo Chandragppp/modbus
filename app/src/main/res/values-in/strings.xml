@@ -95,6 +95,7 @@
     <string name="locked_pro_feat_profiles">Simpan profil koneksi &amp; peta register tak terbatas</string>
     <string name="locked_pro_feat_csv">Pencatat data ke CSV dengan Share sheet Android (tanpa izin penyimpanan)</string>
     <string name="locked_pro_feat_trend">Grafik tren sederhana 1–4 register secara langsung</string>
+    <string name="locked_pro_feat_reports">Laporan pemeriksaan lapangan PDF &amp; Excel (.xlsx) untuk register, pemindai &amp; log tren</string>
 
     <string name="pro_unlock">Buka Pro</string>
     <string name="pro_lifetime">Pro (seumur hidup)</string>
@@ -115,6 +116,67 @@
     <string name="billing_unavailable_reason">Produk in-app pro_lifetime belum tersedia di Google Play pada perangkat ini.</string>
     <string name="ad_unavailable">Iklan gagal dimuat atau perangkat sedang offline. Fitur inti tetap dapat digunakan.</string>
     <string name="purchase_pending">Pembelian sedang menunggu konfirmasi pembayaran Google Play.</string>
+
+    <!-- Laporan (PDF & Excel) -->
+    <string name="report_btn_pdf">Laporan PDF</string>
+    <string name="report_btn_xlsx">Excel</string>
+    <string name="report_dialog_title">Kop Laporan</string>
+    <string name="report_field_device">Nama Perangkat / Slave (mis. Power meter PM-01, VFD Pompa 2)</string>
+    <string name="report_field_technician">Teknisi / Penyusun</string>
+    <string name="report_field_company">Perusahaan / Proyek</string>
+    <string name="report_field_location">Lokasi / Panel</string>
+    <string name="report_field_notes">Catatan</string>
+    <string name="report_export_action">Buat &amp; Bagikan</string>
+    <string name="report_reg_title">Laporan Pembacaan Register Modbus</string>
+    <string name="report_scan_title">Laporan Pemindai Slave Modbus</string>
+    <string name="report_trend_title">Laporan Log Tren Data Modbus</string>
+    <string name="report_section_header">Informasi Pemeriksaan &amp; Perangkat</string>
+    <string name="report_section_connection">Parameter Koneksi &amp; Permintaan</string>
+    <string name="report_section_registers">Tabel Nilai Register / Coil</string>
+    <string name="report_section_pairs">Pasangan Register 32-Bit (Int32 &amp; Float32)</string>
+    <string name="report_section_scan_hits">Daftar Slave yang Menjawab</string>
+    <string name="report_section_trend_stats">Ringkasan Statistik per Kolom</string>
+    <string name="report_section_trend_samples">Tabel Sampel Data Terekam</string>
+    <string name="report_label_device">Perangkat / Slave</string>
+    <string name="report_label_technician">Teknisi</string>
+    <string name="report_label_company">Perusahaan / Proyek</string>
+    <string name="report_label_location">Lokasi</string>
+    <string name="report_label_notes">Catatan</string>
+    <string name="report_label_conn_mode">Koneksi</string>
+    <string name="report_label_unit_id">Unit / Slave ID</string>
+    <string name="report_label_timeout">Timeout</string>
+    <string name="report_label_fc">Function Code</string>
+    <string name="report_label_start_addr">Alamat Awal</string>
+    <string name="report_label_quantity">Jumlah</string>
+    <string name="report_label_read_time">Waktu Baca</string>
+    <string name="report_label_scale">Skala Linear</string>
+    <string name="report_label_byte_order">Urutan Byte 32-Bit</string>
+    <string name="report_label_id_range">Rentang ID Dipindai</string>
+    <string name="report_label_baud_tried">Baud / Serial Dicoba</string>
+    <string name="report_label_scanned_count">Jumlah ID Dipindai</string>
+    <string name="report_label_found_count">Jumlah Slave Menjawab</string>
+    <string name="report_label_interval">Interval Poll</string>
+    <string name="report_label_sample_count">Jumlah Sampel</string>
+    <string name="report_trend_truncated">Menampilkan %1$d dari %2$d sampel terakhir (dipotong maks 200 baris).</string>
+    <string name="report_trend_not_truncated">Menampilkan seluruh %1$d sampel terekam (maks 200 baris).</string>
+    <string name="report_col_addr">Alamat (0-Based)</string>
+    <string name="report_col_modicon">Modicon</string>
+    <string name="report_col_raw_hex">Raw (Hex)</string>
+    <string name="report_col_raw_dec">Raw (UInt16 / Int16)</string>
+    <string name="report_col_decoded">Nilai Terdekode</string>
+    <string name="report_col_status">Status (ON/OFF)</string>
+    <string name="report_col_slave_id">Slave ID</string>
+    <string name="report_col_baud">Baud / Serial</string>
+    <string name="report_col_resp_time">Waktu Respons</string>
+    <string name="report_col_detail">Detail Respons</string>
+    <string name="report_col_column">Kolom</string>
+    <string name="report_col_min">Min</string>
+    <string name="report_col_max">Maks</string>
+    <string name="report_col_avg">Rata-rata</string>
+    <string name="report_col_timestamp">Timestamp (ISO)</string>
+    <string name="report_footer_brand">Dibuat dengan %1$s — ControlEngineerID</string>
+    <string name="report_sign_prepared">Disusun oleh</string>
+    <string name="report_sign_verified">Diperiksa oleh</string>
 
     <!-- Layar Tentang & Panduan Lapangan -->
     <string name="about_title">Tentang &amp; Panduan Lapangan</string>

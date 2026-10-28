@@ -72,6 +72,7 @@ import id.controlengineer.modbus.protocol.ModbusAddress
 import id.controlengineer.modbus.protocol.ModbusPduCodec
 import id.controlengineer.modbus.protocol.ModbusRequest
 import id.controlengineer.modbus.protocol.RegisterDecoder
+import id.controlengineer.modbus.protocol.ReportMeta
 import id.controlengineer.modbus.protocol.RtuCodec
 import id.controlengineer.modbus.protocol.SerialParity
 import kotlinx.coroutines.delay
@@ -402,11 +403,21 @@ fun ConnectionScreen(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ReadWriteScreen(session: ModbusSessionController) {
+fun ReadWriteScreen(
+    session: ModbusSessionController,
+    isPro: Boolean = false,
+    reportMeta: ReportMeta = ReportMeta(),
+    onSaveReportMeta: (ReportMeta) -> Unit = {},
+    onRequestPro: () -> Unit = {},
+) {
+    val context = LocalContext.current
     val profile by session.profile.collectAsState()
     val lastRegs by session.lastRegisters.collectAsState()
     val lastBits by session.lastBits.collectAsState()
     val lastStartAddr by session.lastStartAddress.collectAsState()
+    val lastFc by session.lastFunctionCode.collectAsState()
+    val lastUnitId by session.lastUnitId.collectAsState()
+    val lastReadTime by session.lastReadTimestampMillis.collectAsState()
     val statusText by session.statusText.collectAsState()
     val isError by session.isError.collectAsState()
 
@@ -431,6 +442,7 @@ fun ReadWriteScreen(session: ModbusSessionController) {
     var writeFloatMode by rememberSaveable { mutableStateOf(false) }
     var writeByteOrder by rememberSaveable { mutableStateOf(ByteOrder.ABCD) }
     var pendingWriteRequest by remember { mutableStateOf<Pair<Int, ModbusRequest>?>(null) }
+    var pendingReportFormat by remember { mutableStateOf<ReportFormat?>(null) }
 
     val resolvedAddr = remember(addressInput, notation, selectedFc) {
         ModbusAddress.resolve(addressInput, notation, selectedFc)
@@ -579,7 +591,10 @@ fun ReadWriteScreen(session: ModbusSessionController) {
                     options = listOf(250, 500, 1000, 2000, 5000, 10000),
                     selected = pollIntervalMs,
                     label = { if (it < 1000) "${it}ms" else "${it / 1000}s" },
-                    onSelect = { pollIntervalMs = it },
+                    onSelect = {
+                        pollIntervalMs = it
+                        session.updatePollIntervalMs(it)
+                    },
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
@@ -650,53 +665,61 @@ fun ReadWriteScreen(session: ModbusSessionController) {
             }
         }
 
-        // Tabel Register / Coil Hasil Bacaan
-        if (lastRegs.isNotEmpty() || lastBits.isNotEmpty()) {
-            Card(Modifier.fillMaxWidth()) {
-                Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        stringResource(R.string.rw_registers_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    if (lastRegs.isNotEmpty()) {
-                        val decodedRegs = RegisterDecoder.decodeRegisters(lastStartAddr, lastRegs, activeScale)
-                        for ((idx, reg) in decodedRegs.withIndex()) {
-                            Column(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
-                                    .testTag("reg_row_$idx"),
-                            ) {
-                                val scaledPart = reg.scaledText?.let { " · Scaled=$it" } ?: ""
-                                Text(
-                                    "[${reg.address}] UInt16=${reg.uint16} | Int16=${reg.int16} | ${reg.hex}$scaledPart",
-                                    fontFamily = FontFamily.Monospace,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.SemiBold,
-                                )
-                                Text(
-                                    "Bin: ${reg.binary}" + (reg.bcd?.let { " | BCD: $it" } ?: ""),
-                                    fontFamily = FontFamily.Monospace,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                            if (idx < decodedRegs.lastIndex) HorizontalDivider()
+        // Tabel Register / Coil Hasil Bacaan + Tombol Laporan (Pro)
+        val hasReadResult = lastRegs.isNotEmpty() || lastBits.isNotEmpty()
+        Card(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    stringResource(R.string.rw_registers_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+                if (lastRegs.isNotEmpty()) {
+                    val decodedRegs = RegisterDecoder.decodeRegisters(lastStartAddr, lastRegs, activeScale)
+                    for ((idx, reg) in decodedRegs.withIndex()) {
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                                .testTag("reg_row_$idx"),
+                        ) {
+                            val scaledPart = reg.scaledText?.let { " · Scaled=$it" } ?: ""
+                            Text(
+                                "[${reg.address}] UInt16=${reg.uint16} | Int16=${reg.int16} | ${reg.hex}$scaledPart",
+                                fontFamily = FontFamily.Monospace,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.SemiBold,
+                            )
+                            Text(
+                                "Bin: ${reg.binary}" + (reg.bcd?.let { " | BCD: $it" } ?: ""),
+                                fontFamily = FontFamily.Monospace,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
                         }
-                    } else {
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            lastBits.forEachIndexed { idx, bit ->
-                                val addr = lastStartAddr + idx
-                                Text(
-                                    "[$addr]=${if (bit) "1(ON)" else "0(OFF)"}",
-                                    fontFamily = FontFamily.Monospace,
-                                    modifier = Modifier.padding(4.dp).testTag("bit_row_$idx"),
-                                )
-                            }
+                        if (idx < decodedRegs.lastIndex) HorizontalDivider()
+                    }
+                } else if (lastBits.isNotEmpty()) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        lastBits.forEachIndexed { idx, bit ->
+                            val addr = lastStartAddr + idx
+                            Text(
+                                "[$addr]=${if (bit) "1(ON)" else "0(OFF)"}",
+                                fontFamily = FontFamily.Monospace,
+                                modifier = Modifier.padding(4.dp).testTag("bit_row_$idx"),
+                            )
                         }
                     }
                 }
+                ReportButtonsRow(
+                    enabled = hasReadResult,
+                    onExportPdf = {
+                        if (!isPro) onRequestPro() else pendingReportFormat = ReportFormat.PDF
+                    },
+                    onExportXlsx = {
+                        if (!isPro) onRequestPro() else pendingReportFormat = ReportFormat.XLSX
+                    },
+                )
             }
         }
 
@@ -872,6 +895,51 @@ fun ReadWriteScreen(session: ModbusSessionController) {
             },
         )
     }
+
+    pendingReportFormat?.let { fmt ->
+        ReportHeaderDialog(
+            initialMeta = reportMeta,
+            onConfirm = { meta ->
+                pendingReportFormat = null
+                onSaveReportMeta(meta)
+                when (fmt) {
+                    ReportFormat.PDF -> {
+                        val file = ModbusReportExporter.exportRegisterPdf(
+                            context = context,
+                            meta = meta,
+                            profile = profile,
+                            unitId = lastUnitId,
+                            fc = lastFc,
+                            startAddress = lastStartAddr,
+                            registers = lastRegs,
+                            bits = lastBits,
+                            scale = activeScale,
+                            byteOrder = writeByteOrder,
+                            readTimestampMillis = lastReadTime,
+                        )
+                        ModbusReportExporter.shareReportFile(context, file, ModbusReportExporter.MIME_PDF)
+                    }
+                    ReportFormat.XLSX -> {
+                        val file = ModbusReportExporter.exportRegisterXlsx(
+                            context = context,
+                            meta = meta,
+                            profile = profile,
+                            unitId = lastUnitId,
+                            fc = lastFc,
+                            startAddress = lastStartAddr,
+                            registers = lastRegs,
+                            bits = lastBits,
+                            scale = activeScale,
+                            byteOrder = writeByteOrder,
+                            readTimestampMillis = lastReadTime,
+                        )
+                        ModbusReportExporter.shareReportFile(context, file, ModbusReportExporter.MIME_XLSX)
+                    }
+                }
+            },
+            onDismiss = { pendingReportFormat = null },
+        )
+    }
 }
 
 @Composable
@@ -1013,19 +1081,32 @@ fun MonitorScreen(session: ModbusSessionController) {
 fun ProToolsScreen(
     initialSubTab: Int = 0,
     session: ModbusSessionController,
+    isPro: Boolean = true,
+    reportMeta: ReportMeta = ReportMeta(),
+    onSaveReportMeta: (ReportMeta) -> Unit = {},
+    onRequestPro: () -> Unit = {},
 ) {
     var subTab by rememberSaveable(initialSubTab) { mutableIntStateOf(initialSubTab.coerceIn(0, 1)) }
+    val profile by session.profile.collectAsState()
     val isScanning by session.isScanning.collectAsState()
     val scanCurrentId by session.scanCurrentId.collectAsState()
     val scanDone by session.scanDoneSteps.collectAsState()
     val scanTotal by session.scanTotalSteps.collectAsState()
     val scanHits by session.scanHits.collectAsState()
+    val scanStartId by session.scanStartId.collectAsState()
+    val scanEndId by session.scanEndId.collectAsState()
+    val scanBaudSummary by session.scanBaudSummary.collectAsState()
+    val scanTimestampMillis by session.scanTimestampMillis.collectAsState()
     val samples by session.dataSamples.collectAsState()
+    val lastUnitId by session.lastUnitId.collectAsState()
+    val lastFc by session.lastFunctionCode.collectAsState()
+    val pollIntervalMs by session.lastPollIntervalMs.collectAsState()
     val context = LocalContext.current
 
     var startIdText by rememberSaveable { mutableStateOf("1") }
     var endIdText by rememberSaveable { mutableStateOf("25") }
     var scanBaudCombos by rememberSaveable { mutableStateOf(false) }
+    var pendingReportFormat by remember { mutableStateOf<ReportFormat?>(null) }
 
     Column(
         Modifier
@@ -1164,6 +1245,16 @@ fun ProToolsScreen(
                             }
                         }
                     }
+
+                    ReportButtonsRow(
+                        enabled = !isScanning && scanDone > 0,
+                        onExportPdf = {
+                            if (!isPro) onRequestPro() else pendingReportFormat = ReportFormat.PDF
+                        },
+                        onExportXlsx = {
+                            if (!isPro) onRequestPro() else pendingReportFormat = ReportFormat.XLSX
+                        },
+                    )
                 }
             }
         } else {
@@ -1257,9 +1348,89 @@ fun ProToolsScreen(
                             Text(stringResource(R.string.csv_clear))
                         }
                     }
+
+                    ReportButtonsRow(
+                        enabled = samples.isNotEmpty(),
+                        onExportPdf = {
+                            if (!isPro) onRequestPro() else pendingReportFormat = ReportFormat.PDF
+                        },
+                        onExportXlsx = {
+                            if (!isPro) onRequestPro() else pendingReportFormat = ReportFormat.XLSX
+                        },
+                    )
                 }
             }
         }
+    }
+
+    pendingReportFormat?.let { fmt ->
+        ReportHeaderDialog(
+            initialMeta = reportMeta,
+            onConfirm = { meta ->
+                pendingReportFormat = null
+                onSaveReportMeta(meta)
+                if (subTab == 0) {
+                    when (fmt) {
+                        ReportFormat.PDF -> {
+                            val file = ModbusReportExporter.exportScannerPdf(
+                                context = context,
+                                meta = meta,
+                                profile = profile,
+                                startId = scanStartId,
+                                endId = scanEndId,
+                                baudSummary = scanBaudSummary,
+                                scannedCount = scanDone,
+                                hits = scanHits,
+                                scanTimestampMillis = scanTimestampMillis,
+                            )
+                            ModbusReportExporter.shareReportFile(context, file, ModbusReportExporter.MIME_PDF)
+                        }
+                        ReportFormat.XLSX -> {
+                            val file = ModbusReportExporter.exportScannerXlsx(
+                                context = context,
+                                meta = meta,
+                                profile = profile,
+                                startId = scanStartId,
+                                endId = scanEndId,
+                                baudSummary = scanBaudSummary,
+                                scannedCount = scanDone,
+                                hits = scanHits,
+                                scanTimestampMillis = scanTimestampMillis,
+                            )
+                            ModbusReportExporter.shareReportFile(context, file, ModbusReportExporter.MIME_XLSX)
+                        }
+                    }
+                } else {
+                    when (fmt) {
+                        ReportFormat.PDF -> {
+                            val file = ModbusReportExporter.exportTrendPdf(
+                                context = context,
+                                meta = meta,
+                                profile = profile,
+                                unitId = lastUnitId,
+                                fc = lastFc,
+                                pollIntervalMs = pollIntervalMs,
+                                samples = samples,
+                            )
+                            ModbusReportExporter.shareReportFile(context, file, ModbusReportExporter.MIME_PDF)
+                        }
+                        ReportFormat.XLSX -> {
+                            val file = ModbusReportExporter.exportTrendXlsx(
+                                context = context,
+                                meta = meta,
+                                profile = profile,
+                                unitId = lastUnitId,
+                                fc = lastFc,
+                                pollIntervalMs = pollIntervalMs,
+                                samples = samples,
+                            )
+                            ModbusReportExporter.shareReportFile(context, file, ModbusReportExporter.MIME_XLSX)
+                        }
+                    }
+                }
+            },
+            onDismiss = { pendingReportFormat = null },
+        )
     }
 }
 

@@ -87,7 +87,39 @@ data class ScanHit(
     val baudRate: Int? = null,
     val parity: SerialParity? = null,
     val detail: String,
+    val responseTimeMs: Long? = null,
 )
+
+/** Isian kop laporan pemeriksaan Modbus yang disimpan di DataStore. */
+data class ReportMeta(
+    val technician: String = "",
+    val company: String = "",
+    val location: String = "",
+    val notes: String = "",
+    val deviceName: String = "",
+) {
+    fun encode(): String = listOf(
+        TextCodec.escape(technician),
+        TextCodec.escape(company),
+        TextCodec.escape(location),
+        TextCodec.escape(notes),
+        TextCodec.escape(deviceName),
+    ).joinToString("\t")
+
+    companion object {
+        fun decode(raw: String): ReportMeta {
+            if (raw.isBlank()) return ReportMeta()
+            val p = raw.split('\t')
+            return ReportMeta(
+                technician = p.getOrNull(0)?.let(TextCodec::unescape) ?: "",
+                company = p.getOrNull(1)?.let(TextCodec::unescape) ?: "",
+                location = p.getOrNull(2)?.let(TextCodec::unescape) ?: "",
+                notes = p.getOrNull(3)?.let(TextCodec::unescape) ?: "",
+                deviceName = p.getOrNull(4)?.let(TextCodec::unescape) ?: "",
+            )
+        }
+    }
+}
 
 /** Satu baris rekaman log data untuk ekspor CSV dan grafik tren. */
 data class DataSample(

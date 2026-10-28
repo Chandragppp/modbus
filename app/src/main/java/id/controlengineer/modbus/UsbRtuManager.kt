@@ -248,6 +248,15 @@ class ModbusSessionController(private val appContext: Context) {
     private val _lastFunctionCode = MutableStateFlow(FunctionCode.FC03_READ_HOLDING_REGISTERS)
     val lastFunctionCode: StateFlow<FunctionCode> = _lastFunctionCode.asStateFlow()
 
+    private val _lastUnitId = MutableStateFlow(1)
+    val lastUnitId: StateFlow<Int> = _lastUnitId.asStateFlow()
+
+    private val _lastReadTimestampMillis = MutableStateFlow(0L)
+    val lastReadTimestampMillis: StateFlow<Long> = _lastReadTimestampMillis.asStateFlow()
+
+    private val _lastPollIntervalMs = MutableStateFlow(1000)
+    val lastPollIntervalMs: StateFlow<Int> = _lastPollIntervalMs.asStateFlow()
+
     private val _statusText = MutableStateFlow("")
     val statusText: StateFlow<String> = _statusText.asStateFlow()
 
@@ -269,10 +278,26 @@ class ModbusSessionController(private val appContext: Context) {
     private val _scanTotalSteps = MutableStateFlow(1)
     val scanTotalSteps: StateFlow<Int> = _scanTotalSteps.asStateFlow()
 
+    private val _scanStartId = MutableStateFlow(1)
+    val scanStartId: StateFlow<Int> = _scanStartId.asStateFlow()
+
+    private val _scanEndId = MutableStateFlow(25)
+    val scanEndId: StateFlow<Int> = _scanEndId.asStateFlow()
+
+    private val _scanBaudSummary = MutableStateFlow("")
+    val scanBaudSummary: StateFlow<String> = _scanBaudSummary.asStateFlow()
+
+    private val _scanTimestampMillis = MutableStateFlow(0L)
+    val scanTimestampMillis: StateFlow<Long> = _scanTimestampMillis.asStateFlow()
+
     private var scanJob: Job? = null
 
     fun updateProfile(newProfile: ConnectionProfile) {
         _profile.value = newProfile
+    }
+
+    fun updatePollIntervalMs(intervalMs: Int) {
+        _lastPollIntervalMs.value = intervalMs
     }
 
     fun selectUsbDevice(deviceId: Int?) {
@@ -309,7 +334,7 @@ class ModbusSessionController(private val appContext: Context) {
                 try {
                     val req = ModbusRequest.ReadHoldingRegisters(startAddress = 0, count = 2)
                     val resp = demoTransport.exchange(unitId = 1, request = req, timeoutMs = 200)
-                    handleResponseSuccess(req, resp)
+                    handleResponseSuccess(req, resp, unitId = 1)
                 } catch (_: Throwable) {
                 }
             }
@@ -367,7 +392,7 @@ class ModbusSessionController(private val appContext: Context) {
             try {
                 buildTransport(activeProfile).use { transport ->
                     val resp = transport.exchange(unitId, request, activeProfile.timeoutMs)
-                    handleResponseSuccess(request, resp)
+                    handleResponseSuccess(request, resp, unitId)
                     Result.success(resp)
                 }
             } catch (e: CancellationException) {
@@ -379,26 +404,34 @@ class ModbusSessionController(private val appContext: Context) {
             }
         }
 
-    private fun handleResponseSuccess(request: ModbusRequest, resp: ModbusResponse) {
+    private fun handleResponseSuccess(
+        request: ModbusRequest,
+        resp: ModbusResponse,
+        unitId: Int = _profile.value.unitId,
+    ) {
+        val now = System.currentTimeMillis()
         _lastStartAddress.value = request.startAddress
         _lastFunctionCode.value = request.functionCode
+        _lastUnitId.value = unitId
         when (resp) {
             is ModbusResponse.ReadRegisters -> {
                 _isError.value = false
                 _lastRegisters.value = resp.registers
                 _lastBits.value = emptyList()
+                _lastReadTimestampMillis.value = now
                 _statusText.value = "OK (${resp.registers.size} register)"
                 val sample = DataSample(
-                    timestampMillis = System.currentTimeMillis(),
+                    timestampMillis = now,
                     startAddress = request.startAddress,
                     registers = resp.registers,
                 )
-                _dataSamples.value = (_dataSamples.value + sample).takeLast(120)
+                _dataSamples.value = (_dataSamples.value + sample).takeLast(500)
             }
             is ModbusResponse.ReadBits -> {
                 _isError.value = false
                 _lastBits.value = resp.bits
                 _lastRegisters.value = emptyList()
+                _lastReadTimestampMillis.value = now
                 _statusText.value = "OK (${resp.bits.size} bit)"
             }
             is ModbusResponse.WriteSingleCoil -> {
@@ -445,6 +478,12 @@ class ModbusSessionController(private val appContext: Context) {
         }
 
         val total = (lastId - firstId + 1) * combos.size
+        _scanStartId.value = firstId
+        _scanEndId.value = lastId
+        _scanBaudSummary.value = combos.joinToString(", ") {
+            "${it.first} ${activeProfile.dataBits}${it.second.shortLabel}${activeProfile.stopBits}"
+        }
+        _scanTimestampMillis.value = System.currentTimeMillis()
         _scanHits.value = emptyList()
         _scanDoneSteps.value = 0
         _scanTotalSteps.value = total.coerceAtLeast(1)
@@ -461,6 +500,7 @@ class ModbusSessionController(private val appContext: Context) {
                         _scanCurrentId.value = id
                         _scanDoneSteps.value = step
                         try {
+                            val t0 = System.currentTimeMillis()
                             buildTransport(scanProf).use { transport ->
                                 val req = ModbusRequest.ReadHoldingRegisters(startAddress = 0, count = 1)
                                 val resp = transport.exchange(
@@ -468,6 +508,7 @@ class ModbusSessionController(private val appContext: Context) {
                                     request = req,
                                     timeoutMs = if (_demoMode.value) 50 else activeProfile.timeoutMs.coerceIn(120, 600),
                                 )
+                                val elapsedMs = (System.currentTimeMillis() - t0).coerceAtLeast(1L)
                                 val detail = when (resp) {
                                     is ModbusResponse.ReadRegisters ->
                                         "Reg[0] = ${resp.registers.firstOrNull() ?: 0} (0x${String.format(Locale.ROOT, "%04X", resp.registers.firstOrNull() ?: 0)})"
@@ -480,6 +521,7 @@ class ModbusSessionController(private val appContext: Context) {
                                     baudRate = if (activeProfile.mode == ConnectionMode.RTU_USB) baud else null,
                                     parity = if (activeProfile.mode == ConnectionMode.RTU_USB) parity else null,
                                     detail = detail,
+                                    responseTimeMs = elapsedMs,
                                 )
                                 _scanHits.value = _scanHits.value + hit
                             }
